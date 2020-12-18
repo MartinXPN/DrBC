@@ -2,12 +2,13 @@
 # cython: language_level=3
 
 from cython.operator import dereference as deref
+from libcpp.vector cimport vector
 from libcpp.memory cimport shared_ptr
 import numpy as np
 import tensorflow as tf
 
+from PrepareBatchGraph cimport sparseMatrix, PrepareBatchGraph
 from graph cimport Graph
-from PrepareBatchGraph cimport *
 
 
 cdef class py_sparseMatrix:

@@ -1,10 +1,7 @@
-from distutils.core import setup
-from distutils.extension import Extension
-from setuptools import find_packages
-from Cython.Distutils import build_ext
-from Cython.Build import cythonize
 import numpy as np
-
+from setuptools import find_packages, setup, Extension
+from Cython.Build import cythonize
+from Cython.Distutils import build_ext
 
 setup(
     name='drbcpp',

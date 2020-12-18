@@ -4,8 +4,7 @@
 from cython.operator import dereference as deref
 from libcpp.memory cimport shared_ptr
 
-from libc.stdlib cimport free
-from graph_struct cimport *
+from graph_struct cimport GraphStruct
 
 
 cdef class py_GraphStruct:

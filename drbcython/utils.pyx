@@ -2,10 +2,12 @@
 # cython: language_level=3
 
 from cython.operator import dereference as deref
+from libcpp.vector cimport vector
 from libcpp.memory cimport shared_ptr
 
+from utils cimport Utils
 from graph cimport Graph
-from utils cimport *
+
 
 cdef class py_Utils:
     cdef shared_ptr[Utils] inner_Utils
@@ -42,4 +44,3 @@ cdef class py_Utils:
     
     def convertToLog(self,CB):
         return deref(self.inner_Utils).convertToLog(CB)
-

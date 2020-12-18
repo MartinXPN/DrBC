@@ -2,9 +2,7 @@
 # cython: language_level=3
 
 from libcpp.vector cimport vector
-from libcpp.set cimport set
 from libcpp.memory cimport shared_ptr
-from libcpp cimport bool
 from graph cimport Graph
 
 
@@ -17,4 +15,3 @@ cdef extern from "../cpp/utils.h":
         vector[double] convertToLog(vector[double] CB)
         vector[double] bc_log
         vector[int] bc_bool
-

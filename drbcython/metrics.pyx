@@ -3,18 +3,13 @@
 
 from cython.operator cimport dereference as deref
 from libcpp.memory cimport shared_ptr
-from libc.stdlib cimport malloc
-from scipy import stats
-from cpython cimport bool
-from libc cimport math
 cimport cython
 import numpy as np
 cimport numpy as np
-import scipy as sp
-import scipy.stats
-from numpy cimport ndarray, int64_t, float64_t, intp_t
+from numpy cimport int64_t, intp_t
 
-from metrics cimport *
+from metrics cimport Metrics
+
 
 cdef class py_Metrics:
     cdef shared_ptr[Metrics] inner_Metrics

@@ -2,15 +2,14 @@
 # cython: language_level=3
 
 from cython.operator cimport dereference as deref
-cimport cpython.ref as cpy_ref
-from libcpp.memory cimport shared_ptr
 from libc.stdlib cimport malloc
 from libc.stdlib cimport free
+from libcpp.memory cimport shared_ptr
 import numpy as np
 
-from graph cimport *
+from graph cimport Graph, GSet
 
-#
+
 cdef class py_Graph:
     cdef shared_ptr[Graph] inner_graph
     def __cinit__(self,*arg):
@@ -105,5 +104,3 @@ cdef class py_GSet:
             cint_edges_from[i]=edge_list[i].first
             cint_edges_to[i] =edge_list[i].second
         return py_Graph(num_nodes,num_edges,cint_edges_from,cint_edges_to)
-
-
