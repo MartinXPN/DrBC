@@ -1,4 +1,5 @@
-from drbcpp.betlearn import BetLearn, fix_random_seed
+from drbcpp.betlearn import BetLearn
+from drbcpp.util import fix_random_seed
 
 
 def main():
