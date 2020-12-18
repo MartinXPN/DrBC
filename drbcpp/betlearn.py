@@ -1,9 +1,10 @@
 import copy
 import os
 import random
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import List
+from typing import List, Dict
 
 import networkx as nx
 import numpy as np
@@ -16,19 +17,19 @@ from tensorflow.keras.utils import Sequence
 from tensorflow.python.keras.callbacks import CallbackList
 from tqdm import tqdm
 
-from drbcython import metrics, utils, graph, PrepareBatchGraph
 from drbcpp.layers import DrBCRNN
 
+from drbcython import metrics, utils, graph, PrepareBatchGraph
+from drbcython.utils import py_Utils
+from drbcython.graph import py_GSet
 
-# For reproducibility
-SEED = 42
-random.seed(SEED)
-np.random.seed(SEED)
-tf.random.set_seed(SEED)
-os.environ['PYTHONHASHSEED'] = str(SEED)
-os.environ['TF_CUDNN_DETERMINISTIC'] = '1'  # new flag present in tf 2.0+
 
-aggregatorID = 2  # how to aggregate node neighbors, 0:sum; 1:mean; 2:GCN(weighted sum)
+def fix_random_seed(seed=42):
+    random.seed(seed)
+    np.random.seed(seed)
+    tf.random.set_seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    os.environ['TF_CUDNN_DETERMINISTIC'] = '1'  # new flag present in tf 2.0+
 
 
 def pairwise_ranking_crossentropy_loss(y_true, y_pred):
@@ -79,27 +80,26 @@ def create_drbc_model(node_feature_dim=3, aux_feature_dim=4, rnn_repetitions=5,
     return Model(inputs=[input_node_features, input_aux_features, input_n2n], outputs=out, name='DrBC')
 
 
+@dataclass
 class DataGenerator(Sequence):
-    def __init__(self, tag: str = 'generator', graph_type: str = '',
-                 min_nodes: int = 0, max_nodes: int = 0,
-                 nb_graphs: int = 1, graphs_per_batch: int = 1, nb_batches: int = 1,
-                 include_idx_map: bool = False, random_samples: bool = True,
-                 log_betweenness: bool = True, compute_betweenness: bool = True):
-        self.utils = utils.py_Utils()
-        self.graphs = graph.py_GSet()
-        self.count: int = 0
-        self.betweenness: List[float] = []
-        self.tag: str = tag
-        self.graph_type: str = graph_type
-        self.min_nodes: int = min_nodes
-        self.max_nodes: int = max_nodes
-        self.nb_graphs: int = nb_graphs
-        self.graphs_per_batch: int = graphs_per_batch
-        self.nb_batches: int = nb_batches
-        self.include_idx_map: bool = include_idx_map
-        self.random_samples: bool = random_samples
-        self.log_betweenness: bool = log_betweenness
-        self.compute_betweenness = compute_betweenness
+    utils: py_Utils = field(default_factory=lambda: utils.py_Utils())
+    graphs: py_GSet = field(default_factory=lambda: graph.py_GSet())
+    count: int = 0
+    betweenness: List[float] = field(default_factory=list)
+
+    tag: str = 'generator'
+    graph_type: str = ''
+    min_nodes: int = 0
+    max_nodes: int = 0
+    nb_graphs: int = 1
+    graphs_per_batch: int = 1
+    nb_batches: int = 1
+    node_neighbors_aggregation: str = 'gcn'
+    include_idx_map: bool = False
+    random_samples: bool = True
+    log_betweenness: bool = True
+    compute_betweenness = True
+    neighbor_aggregation_ids: Dict[str, int] = field(default_factory=lambda: {'sum': 0, 'mean': 1, 'gcn': 2})
 
     def __len__(self) -> int:
         return self.nb_batches
@@ -110,7 +110,8 @@ class DataGenerator(Sequence):
             label += self.betweenness[i]
         label = np.array(label)
 
-        batch_graph = PrepareBatchGraph.py_PrepareBatchGraph(aggregatorID)
+        aggregator_id = self.neighbor_aggregation_ids[self.node_neighbors_aggregation]
+        batch_graph = PrepareBatchGraph.py_PrepareBatchGraph(aggregator_id)
         batch_graph.SetupBatchGraph(graphs)
         assert (len(batch_graph.pair_ids_src) == len(batch_graph.pair_ids_tgt))
 
@@ -211,6 +212,7 @@ class EvaluateCallback(Callback):
 
 class BetLearn:
     def __init__(self, min_nodes, max_nodes, nb_train_graphs, nb_valid_graphs, graphs_per_batch, nb_batches,
+                 node_neighbors_aggregation='gcn',
                  graph_type='powerlaw', optimizer='adam', aggregation='lstm', combine='gru'):
         """
         :param min_nodes: minimum training scale (node set size)
@@ -219,19 +221,20 @@ class BetLearn:
         :param nb_valid_graphs: number of validation graphs
         :param graphs_per_batch: number of graphs sampled per batch
         :param nb_batches: number of batches to process per each training epoch
+        :param node_neighbors_aggregation: {sum, mean, gcn (weighted sum)}
         :param graph_type: {powerlaw, erdos_renyi, powerlaw, small-world, barabasi_albert}
         :param optimizer: any tf.keras supported optimizer
         :param aggregation: how to aggregate sequences after DrBCRNN {min, max, sum, mean, lstm}
         :param combine: how to combine in each iteration in DrBCRNN {structure2vec, graphsage, gru}
         """
-        self.experiment_path = Path('../experiments') / datetime.now().replace(microsecond=0).isoformat()
+        self.experiment_path = Path('experiments') / datetime.now().replace(microsecond=0).isoformat()
         self.model_save_path = self.experiment_path / 'models/'
         self.log_dir = self.experiment_path / 'logs/'
         self.model_save_path.mkdir(parents=True, exist_ok=True)
         self.log_dir.mkdir(parents=True, exist_ok=True)
 
-        self.train_generator = DataGenerator(tag='Train', graph_type=graph_type, min_nodes=min_nodes, max_nodes=max_nodes, nb_graphs=nb_train_graphs, graphs_per_batch=graphs_per_batch, nb_batches=nb_batches, include_idx_map=False, random_samples=True, log_betweenness=True)
-        self.valid_generator = DataGenerator(tag='Valid', graph_type=graph_type, min_nodes=min_nodes, max_nodes=max_nodes, nb_graphs=nb_valid_graphs, graphs_per_batch=1, nb_batches=nb_valid_graphs, include_idx_map=True, random_samples=False, log_betweenness=False)
+        self.train_generator = DataGenerator(tag='Train', graph_type=graph_type, min_nodes=min_nodes, max_nodes=max_nodes, nb_graphs=nb_train_graphs, node_neighbors_aggregation=node_neighbors_aggregation, graphs_per_batch=graphs_per_batch, nb_batches=nb_batches, include_idx_map=False, random_samples=True, log_betweenness=True)
+        self.valid_generator = DataGenerator(tag='Valid', graph_type=graph_type, min_nodes=min_nodes, max_nodes=max_nodes, nb_graphs=nb_valid_graphs, node_neighbors_aggregation=node_neighbors_aggregation, graphs_per_batch=1, nb_batches=nb_valid_graphs, include_idx_map=True, random_samples=False, log_betweenness=False)
 
         self.model = create_drbc_model(aggregation=aggregation, combine=combine)
         self.model.compile(optimizer=optimizer, loss=pairwise_ranking_crossentropy_loss)
