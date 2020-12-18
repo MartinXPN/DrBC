@@ -7,8 +7,8 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model, Model
 from tqdm import trange, tqdm
 
-from src.drbcpp import metrics
-from betlearn import DataGenerator, EvaluateCallback
+from drbcython import metrics
+from drbcpp.betlearn import DataGenerator, EvaluateCallback
 
 metrics = metrics.py_Metrics()
 

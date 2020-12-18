@@ -1,6 +1,6 @@
 from distutils.core import setup
-from setuptools import find_packages
 from distutils.extension import Extension
+from setuptools import find_packages
 from Cython.Distutils import build_ext
 from Cython.Build import cythonize
 import numpy as np
@@ -30,11 +30,11 @@ setup(
     cmdclass={'build_ext': build_ext},
     ext_package='drbcython',
     ext_modules=cythonize([
-        Extension('PrepareBatchGraph', sources=['drbcython/PrepareBatchGraph.pyx', 'src/lib/PrepareBatchGraph.cpp', 'src/lib/utils.cpp', 'src/lib/graph.cpp', 'src/lib/graph_struct.cpp', 'src/lib/graphUtil.cpp'], language='c++', extra_compile_args=['-std=c++11']),
-        Extension('graph', sources=['drbcython/graph.pyx', 'src/lib/graph.cpp'], language='c++', extra_compile_args=['-std=c++11']),
-        Extension('metrics', sources=['drbcython/metrics.pyx', 'src/lib/metrics.cpp', 'src/lib/graph.cpp'], language='c++', extra_compile_args=['-std=c++11'], include_dirs=[np.get_include()]),
-        Extension('utils', sources=['drbcython/utils.pyx', 'src/lib/utils.cpp', 'src/lib/graph.cpp', 'src/lib/graphUtil.cpp'], language='c++', extra_compile_args=['-std=c++11']),
-        Extension('graph_struct', sources=['drbcython/graph_struct.pyx', 'src/lib/graph_struct.cpp'], language='c++', extra_compile_args=['-std=c++11']),
+        Extension('PrepareBatchGraph', sources=['drbcython/PrepareBatchGraph.pyx', 'cpp/PrepareBatchGraph.cpp', 'cpp/utils.cpp', 'cpp/graph.cpp', 'cpp/graph_struct.cpp', 'cpp/graphUtil.cpp'], language='c++', extra_compile_args=['-std=c++11']),
+        Extension('graph', sources=['drbcython/graph.pyx', 'cpp/graph.cpp'], language='c++', extra_compile_args=['-std=c++11']),
+        Extension('metrics', sources=['drbcython/metrics.pyx', 'cpp/metrics.cpp', 'cpp/graph.cpp'], language='c++', extra_compile_args=['-std=c++11'], include_dirs=[np.get_include()]),
+        Extension('utils', sources=['drbcython/utils.pyx', 'cpp/utils.cpp', 'cpp/graph.cpp', 'cpp/graphUtil.cpp'], language='c++', extra_compile_args=['-std=c++11']),
+        Extension('graph_struct', sources=['drbcython/graph_struct.pyx', 'cpp/graph_struct.cpp'], language='c++', extra_compile_args=['-std=c++11']),
     ]),
 
     include_package_data=True,

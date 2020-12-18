@@ -8,7 +8,7 @@ from libcpp cimport bool
 from graph cimport Graph
 
 
-cdef extern from "../src/lib/utils.h":
+cdef extern from "../cpp/utils.h":
     cdef cppclass Utils:
 
         Utils()

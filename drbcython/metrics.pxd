@@ -6,7 +6,7 @@ from libcpp.memory cimport shared_ptr
 from libcpp.pair cimport pair
 
 
-cdef extern from "../src/lib/metrics.h":
+cdef extern from "../cpp/metrics.h":
 
     cdef cppclass Metrics:
         Metrics() except+

@@ -17,7 +17,7 @@ from tensorflow.python.keras.callbacks import CallbackList
 from tqdm import tqdm
 
 from drbcython import metrics, utils, graph, PrepareBatchGraph
-from layers import DrBCRNN
+from drbcpp.layers import DrBCRNN
 
 
 # For reproducibility
@@ -224,7 +224,7 @@ class BetLearn:
         :param aggregation: how to aggregate sequences after DrBCRNN {min, max, sum, mean, lstm}
         :param combine: how to combine in each iteration in DrBCRNN {structure2vec, graphsage, gru}
         """
-        self.experiment_path = Path('./experiments') / datetime.now().replace(microsecond=0).isoformat()
+        self.experiment_path = Path('../experiments') / datetime.now().replace(microsecond=0).isoformat()
         self.model_save_path = self.experiment_path / 'models/'
         self.log_dir = self.experiment_path / 'logs/'
         self.model_save_path.mkdir(parents=True, exist_ok=True)

@@ -1,4 +1,4 @@
-from betlearn import BetLearn
+from drbcpp.betlearn import BetLearn
 
 
 def main():

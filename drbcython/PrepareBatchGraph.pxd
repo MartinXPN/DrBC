@@ -6,7 +6,7 @@ from libcpp.memory cimport shared_ptr
 from libcpp.pair cimport pair
 from graph cimport Graph
 
-cdef extern from "../src/lib/PrepareBatchGraph.h":
+cdef extern from "../cpp/PrepareBatchGraph.h":
     cdef cppclass sparseMatrix:
         sparseMatrix()except+
         vector[int] rowIndex
