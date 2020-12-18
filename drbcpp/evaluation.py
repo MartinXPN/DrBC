@@ -14,9 +14,9 @@ class EvaluateCallback(Callback):
 
     def evaluate(self):
         epoch_logs = {
-            f'{self.prepend_str}top0.01': [],
-            f'{self.prepend_str}top0.05': [],
-            f'{self.prepend_str}top0.1': [],
+            f'{self.prepend_str}top0_01': [],
+            f'{self.prepend_str}top0_05': [],
+            f'{self.prepend_str}top0_1': [],
             f'{self.prepend_str}kendal': [],
         }
         for gid, (x, y, idx_map) in enumerate(self.data_generator):
@@ -25,9 +25,9 @@ class EvaluateCallback(Callback):
                             for i, pred_betweenness in enumerate(result)]
 
             betw_label = self.data_generator.betweenness[gid]
-            epoch_logs[f'{self.prepend_str}top0.01'].append(self.metrics.RankTopK(betw_label, betw_predict, 0.01))
-            epoch_logs[f'{self.prepend_str}top0.05'].append(self.metrics.RankTopK(betw_label, betw_predict, 0.05))
-            epoch_logs[f'{self.prepend_str}top0.1'].append(self.metrics.RankTopK(betw_label, betw_predict, 0.1))
+            epoch_logs[f'{self.prepend_str}top0_01'].append(self.metrics.RankTopK(betw_label, betw_predict, 0.01))
+            epoch_logs[f'{self.prepend_str}top0_05'].append(self.metrics.RankTopK(betw_label, betw_predict, 0.05))
+            epoch_logs[f'{self.prepend_str}top0_1'].append(self.metrics.RankTopK(betw_label, betw_predict, 0.1))
             epoch_logs[f'{self.prepend_str}kendal'].append(self.metrics.RankKendal(betw_label, betw_predict))
         return {k: np.mean(val) for k, val in epoch_logs.items()}
 
