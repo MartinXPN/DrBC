@@ -21,6 +21,7 @@ setup(
         'tqdm>=4.54.1',
         'tensorflow>=2.4.0',
         'fire>=0.3.1',
+        'aim>=2.1.4',
     ],
     extras_require={},
 

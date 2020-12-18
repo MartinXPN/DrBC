@@ -4,6 +4,8 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from aim import Session
+from aim.tensorflow import AimCallback
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, TensorBoard, ReduceLROnPlateau
 from tensorflow.python.keras.callbacks import CallbackList
 
@@ -13,10 +15,12 @@ from drbcpp.loss import pairwise_ranking_crossentropy_loss
 from drbcpp.models import drbc_model
 
 
-class BetLearn:
-    def __init__(self, min_nodes, max_nodes, nb_train_graphs, nb_valid_graphs, graphs_per_batch, nb_batches,
-                 node_neighbors_aggregation='gcn',
-                 graph_type='powerlaw', optimizer='adam', aggregation='lstm', combine='gru'):
+class Gym:
+    def __init__(self, min_nodes: int, max_nodes: int, nb_train_graphs: int, nb_valid_graphs: int,
+                 graphs_per_batch: int, nb_batches: int,
+                 node_neighbors_aggregation: str = 'gcn',
+                 graph_type: str = 'powerlaw', optimizer='adam', aggregation: str = 'lstm', combine: str = 'gru',
+                 experiment: str = 'vanilla_drbc'):
         """
         :param min_nodes: minimum training scale (node set size)
         :param max_nodes: maximum training scale (node set size)
@@ -29,6 +33,7 @@ class BetLearn:
         :param optimizer: any tf.keras supported optimizer
         :param aggregation: how to aggregate sequences after DrBCRNN {min, max, sum, mean, lstm}
         :param combine: how to combine in each iteration in DrBCRNN {structure2vec, graphsage, gru}
+        :param experiment: description of the experiment
         """
         self.experiment_path = Path('experiments') / datetime.now().replace(microsecond=0).isoformat()
         self.model_save_path = self.experiment_path / 'models/'
@@ -43,6 +48,7 @@ class BetLearn:
         self.model.compile(optimizer=optimizer, loss=pairwise_ranking_crossentropy_loss)
         self.model.summary()
         print(f'Logging experiments at: `{self.experiment_path.absolute()}`')
+        self.aim_session = Session(experiment=experiment)
 
     def predict(self, gid):
         x, y, idx_map = self.valid_generator[gid]
@@ -61,6 +67,7 @@ class BetLearn:
         callbacks = CallbackList([
             EvaluateCallback(self.valid_generator, prepend_str='val_'),
             TensorBoard(self.log_dir, profile_batch=0),
+            AimCallback(self.aim_session),
             ModelCheckpoint(self.model_save_path / 'best.h5py', monitor='val_kendal', save_best_only=True, verbose=1, mode='max'),
             EarlyStopping(monitor='val_kendal', patience=5, mode='max', restore_best_weights=True),
             ReduceLROnPlateau(monitor='val_kendal', patience=2, factor=0.5, mode='max'),

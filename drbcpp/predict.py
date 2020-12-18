@@ -8,7 +8,7 @@ from tensorflow.keras.models import load_model, Model
 from tqdm import trange, tqdm
 
 from drbcython import metrics
-from drbcpp.betlearn import DataGenerator, EvaluateCallback
+from drbcpp.gym import DataGenerator, EvaluateCallback
 
 metrics = metrics.py_Metrics()
 
