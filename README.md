@@ -9,19 +9,18 @@ Original implementation: https://github.com/FFrankyy/DrBC/
 ![](./visualize/Figure_demo.jpg "Demo")
 
 The code folder is organized as follows:
-
-* __cpp/__: contains all the .cpp and .h files:
-    + __cpp/PrepareBatchGraph.cpp__: Prepare the batch graphs used in the tensorflow codes.
-    + __cpp/graph.cpp__: basic structure for graphs.
-    + __cpp/graphUtil.cpp__: Compute the collective influence functions.
-    + __cpp/graph_struct.cpp__: Linked list data structure for sparse graphs.
-    + __cpp/metrics.cpp__: Compute the metrics functions such as topk accuracy and kendal tau distance. 
-    + __cpp/utils.cpp__: Compute nodes' betweenness centrality.
-* __drbcpp/__: contains all the python files for the training and model definition
-* __drbcython/__: contains the python bindings for c++ files defined in __cpp/__
-* __visualize/__: contains the figures used in the paper
-* __experiments/__: Will contain all the experiments in the chronological order (including models and logs)
-
+```text
+> cpp/                           Contains all the .cpp and .h files
+     > PrepareBatchGraph         Prepare the batch graphs used in the tensorflow codes
+     > graph                     Basic structure for graphs
+     > graphUtil                 Compute the collective influence functions
+     > graph_struct              Linked list data structure for sparse graphs
+     > metrics                   Compute the metrics functions such as topk accuracy and kendal tau distance
+     > utils                     Compute nodes' betweenness centrality
+> drbcpp/                        Contains all the python files for the training and model definition
+> drbcython/                     Contains the python bindings for c++ files defined in 'cpp/'
+> experiments/                   Will contain all the experiments in the chronological order (including models and logs)
+```
 
 
 ## To run the project
@@ -51,19 +50,14 @@ predict.py real --model_path experiments/<DATE>/models/best.h5py --data_test Dat
 
 
 ## Baselines implementations
-For RK and k-BC, we use the following implementations:
-```
-https://github.com/ecrc/BeBeCA
-```
-For KADABRA, we use:
-```
-https://github.com/natema/kadabra
-```
-For ABRA, we use the codes in the original paper.
-For node2vec, we use:
-```
-https://github.com/snap-stanford/snap/tree/master/examples/node2vec
-```
+| Approach      | Implementation  |
+| ------------- | --------------- |
+| RK and k-BC   | [https://github.com/ecrc/BeBeCA](https://github.com/ecrc/BeBeCA) |
+| KADABRA       | [https://github.com/natema/kadabra](https://github.com/natema/kadabra) |
+| ABRA          | Codes in the original paper |
+| node2vec      | [https://github.com/snap-stanford/snap/tree/master/examples/node2vec](https://github.com/snap-stanford/snap/tree/master/examples/node2vec) |
+
+
 
 ## References
 To cite our work:
