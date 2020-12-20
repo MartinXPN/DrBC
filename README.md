@@ -33,7 +33,14 @@ cd DrBCPP && pip install .
 ## Training
 Adjust hyper-parameters in `start.py`, and run the following to train the model
 ```
+# Change the hyperparameters in the start.py and then run it
 python start.py
+
+# Or alternatively provide all the hyperparameters via command line
+python -m drbcpp.gym --experiment my_experiment_name - \
+        construct_datasets --min_nodes 2 --max_nodes 1000 --nb_train_graphs 123 --nb_valid_graphs 123 --graphs_per_batch 20 --nb_batches 20 - \
+        construct_model - \ 
+        train --epochs 10
 ```
 
 
