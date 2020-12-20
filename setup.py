@@ -9,7 +9,7 @@ setup(
     description='Python package for estimating the high Betweenness Centraliy (BC) nodes in a graph',
     author='Martin Mirakyan',
     author_email='mirakyanmartin@gmail.com',
-    python_requires='>=3.8.0,<3.9',
+    python_requires='>=3.7.0,<3.9',
     url='https://github.com/MartinXPN/DrBCPP',
     packages=find_packages(exclude=('tests',)),
     install_requires=[
@@ -41,7 +41,9 @@ setup(
         # Full list of Trove classifiers: https://pypi.python.org/pypi?%3Aaction=list_classifiers
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: Implementation :: CPython',
         'Topic :: Scientific/Engineering :: Artificial Intelligence',

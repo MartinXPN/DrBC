@@ -14,7 +14,7 @@ def main():
               node_neighbors_aggregation='gcn',
               graph_type='powerlaw', optimizer='adam', aggregation='max', combine='gru',
               experiment='vanilla_drbc')
-    gym.train(epochs=100)
+    gym.train(epochs=100, stop_patience=5, lr_reduce_patience=2)
 
 
 if __name__ == "__main__":

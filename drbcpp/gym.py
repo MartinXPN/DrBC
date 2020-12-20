@@ -1,18 +1,35 @@
 import copy
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 import numpy as np
 import pandas as pd
 from aim import Session
 from aim.tensorflow import AimCallback
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, TensorBoard, ReduceLROnPlateau
-from tensorflow.python.keras.callbacks import CallbackList
+from tensorflow.python.keras.callbacks import CallbackList, Callback
 
 from drbcpp.data import DataGenerator
 from drbcpp.evaluation import EvaluateCallback
 from drbcpp.loss import pairwise_ranking_crossentropy_loss
 from drbcpp.models import drbc_model
+
+
+@dataclass
+class DataMonitor(Callback):
+    train_generator: DataGenerator
+    valid_generator: Optional[DataGenerator]
+    update_frequency: int = 5
+
+    def on_epoch_begin(self, epoch, logs=None):
+        if epoch % self.update_frequency == 0:
+            self.train_generator.gen_new_graphs()
+            if self.valid_generator:
+                self.valid_generator.gen_new_graphs()
+
+        return super().on_epoch_begin(epoch, logs)
 
 
 class Gym:
@@ -59,7 +76,7 @@ class Gym:
                          for i, pred_betweenness in enumerate(result)]
         return result_output
 
-    def train(self, epochs):
+    def train(self, epochs: int, stop_patience: int = 5, lr_reduce_patience: int = 2):
         """
         functional API with model.fit doesn't support sparse tensors with the current implementation =>
         we write the training loop ourselves
@@ -69,18 +86,15 @@ class Gym:
             TensorBoard(self.log_dir, profile_batch=0),
             AimCallback(self.aim_session),
             ModelCheckpoint(self.model_save_path / 'best.h5py', monitor='val_kendal', save_best_only=True, verbose=1, mode='max'),
-            EarlyStopping(monitor='val_kendal', patience=5, mode='max', restore_best_weights=True),
-            ReduceLROnPlateau(monitor='val_kendal', patience=2, factor=0.5, mode='max'),
+            EarlyStopping(monitor='val_kendal', patience=stop_patience, mode='max', restore_best_weights=True),
+            ReduceLROnPlateau(monitor='val_kendal', patience=lr_reduce_patience, factor=0.7, mode='max'),
+            DataMonitor(self.train_generator, self.valid_generator, update_frequency=5),
         ],  add_history=True, add_progbar=True, verbose=1,
             model=self.model,
             epochs=epochs, steps=len(self.train_generator))
 
         callbacks.on_train_begin()
         for epoch in range(epochs):
-            if epoch % 5 == 0:
-                self.train_generator.gen_new_graphs()
-                self.valid_generator.gen_new_graphs()
-
             callbacks.on_epoch_begin(epoch)
             [c.on_train_begin() for c in callbacks]
             for batch, (x, y) in enumerate(self.train_generator):
