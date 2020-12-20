@@ -58,6 +58,11 @@ class Gym:
         self.model_save_path.mkdir(parents=True, exist_ok=True)
         self.log_dir.mkdir(parents=True, exist_ok=True)
 
+        latest = Path('experiments') / 'latest/'
+        if latest.exists():
+            latest.unlink()
+        latest.symlink_to(self.experiment_path.absolute(), target_is_directory=True)
+
         self.train_generator = DataGenerator(tag='Train', graph_type=graph_type, min_nodes=min_nodes, max_nodes=max_nodes, nb_graphs=nb_train_graphs, node_neighbors_aggregation=node_neighbors_aggregation, graphs_per_batch=graphs_per_batch, nb_batches=nb_batches, include_idx_map=False, random_samples=True, log_betweenness=True)
         self.valid_generator = DataGenerator(tag='Valid', graph_type=graph_type, min_nodes=min_nodes, max_nodes=max_nodes, nb_graphs=nb_valid_graphs, node_neighbors_aggregation=node_neighbors_aggregation, graphs_per_batch=1, nb_batches=nb_valid_graphs, include_idx_map=True, random_samples=False, log_betweenness=False)
 
@@ -93,10 +98,12 @@ class Gym:
             model=self.model,
             epochs=epochs, steps=len(self.train_generator))
 
+        epoch_logs = {}
         callbacks.on_train_begin()
         for epoch in range(epochs):
             callbacks.on_epoch_begin(epoch)
             [c.on_train_begin() for c in callbacks]
+            logs = {}
             for batch, (x, y) in enumerate(self.train_generator):
                 callbacks.on_train_batch_begin(batch)
                 logs = self.model.train_on_batch(x, y, return_dict=True)
@@ -109,4 +116,4 @@ class Gym:
                 break
 
         callbacks.on_train_end(copy.copy(epoch_logs))
-        print(self.model.history.history)
+        return self.model.history.history
