@@ -1,13 +1,16 @@
+import copy
 from dataclasses import dataclass, field
-from typing import List, Dict
+from typing import List, Dict, Optional, Tuple
 
 import networkx as nx
 import numpy as np
 from drbcython.graph import py_GSet
 from drbcython.utils import py_Utils
 from tensorflow.keras.utils import Sequence
+from tensorflow.keras.callbacks import Callback
 from tqdm import tqdm
 
+from drbcpp.util import ThreadWithReturnValue
 from drbcython import utils, graph, PrepareBatchGraph
 
 
@@ -65,6 +68,13 @@ class DataGenerator(Sequence):
             return self.get_batch(graphs=g_list, ids=id_list)
         return self.get_batch(graphs=[self.graphs.Get(index)], ids=[index])
 
+    def __copy__(self) -> 'DataGenerator':
+        """ Omit utils and graphs as they are cython objects and do not support copying """
+        config = {k: v for k, v in self.__dict__.items() if k not in {'utils', 'graphs', 'betweenness'}}
+        res = __class__(**config)
+        res.clear()
+        return res
+
     @staticmethod
     def gen_network(g):  # networkx2four
         edges = g.edges()
@@ -106,3 +116,50 @@ class DataGenerator(Sequence):
         self.count = 0
         self.graphs.Clear()
         self.betweenness = []
+
+
+@dataclass
+class DataMonitor(Callback):
+    """
+    Provide new data when it is used too much
+    Generate new graphs once per every `update_frequency` epochs
+    Uses multithreading to genearte new data on a separate thread
+    (does not use mutiprocessing as it would require to pickle/unpickle cython `utils` and `graphs` which have
+     a cinit => require custom __reduce__ of all types in this project)
+    """
+    train_generator: DataGenerator
+    valid_generator: Optional[DataGenerator]
+    update_frequency: int = 5
+
+    prefetch: int = 1
+    processes: List[ThreadWithReturnValue] = field(default_factory=lambda: list())
+
+    def gen_new(self) -> Tuple[DataGenerator, Optional[DataGenerator]]:
+        new_train_generator = copy.copy(self.train_generator)
+        new_valid_generator = copy.copy(self.valid_generator)
+        new_train_generator.gen_new_graphs()
+        if new_valid_generator:
+            new_valid_generator.gen_new_graphs()
+        return new_train_generator, new_valid_generator
+
+    def on_train_begin(self, logs=None):
+        assert self.prefetch >= 1
+        for i in range(self.prefetch):
+            t = ThreadWithReturnValue(target=self.gen_new)
+            t.start()
+            self.processes.append(t)
+        return super().on_train_begin(logs)
+
+    def on_epoch_begin(self, epoch, logs=None):
+        if epoch % self.update_frequency != 0:
+            return super().on_epoch_begin(epoch, logs)
+
+        front = self.processes.pop(0)
+        train, valid = front.join()
+        self.train_generator.__dict__ = train.__dict__
+        self.valid_generator.__dict__ = valid.__dict__
+
+        t = ThreadWithReturnValue(target=self.gen_new)
+        t.start()
+        self.processes.append(t)
+        return super().on_epoch_begin(epoch, logs)
