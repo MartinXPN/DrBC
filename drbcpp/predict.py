@@ -7,10 +7,7 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model, Model
 from tqdm import trange, tqdm
 
-from drbcython import metrics
 from drbcpp.gym import DataGenerator, EvaluateCallback
-
-metrics = metrics.py_Metrics()
 
 
 def evaluate_synthetic_data(data_test, model_path):

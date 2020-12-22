@@ -23,7 +23,7 @@ The code folder is organized as follows:
 ```
 
 
-## To run the project
+## Prerequisites
 Get the source code, and install all the dependencies.
 ```
 git clone https://github.com/MartinXPN/DrBCPP.git
@@ -45,14 +45,16 @@ python -m drbcpp.gym --experiment my_experiment_name - \
 
 
 ## Reproducing the results that reported in the paper
-Here is the link to the dataset that was used in the paper:
+Download the dataset used for evaluation in the paper:
 ```
-TODO
+https://drive.google.com/file/d/1nsVX8t5EP3JaTjfeHPf74N21jSDUA8dJ/view?usp=sharing 
 ```
 
 To run the evaluation and get the results
 ```shell script
-predict.py real --model_path experiments/<DATE>/models/best.h5py --data_test Data/Real/amazon.txt --label_file Data/Real/exact_bc/amazon.txt
+python predict.py real --model_path experiments/latest/models/best.h5py \
+                       --data_test datasets/Real/amazon.txt \
+                       --label_file datasets/Real/amazon_score.txt
 ```
 
 

@@ -16,6 +16,7 @@ setup(
         'Cython>=0.29.21',
         'networkx>=2.5',
         'scipy>=1.5.4',
+        'scikit-learn>=0.23.2',
         'numpy>=1.19.4',
         'pandas>=1.1.5',
         'tqdm>=4.54.1',
@@ -32,7 +33,6 @@ setup(
         Extension('graph', sources=['drbcython/graph.pyx', 'cpp/graph.cpp'], language='c++', extra_compile_args=['-std=c++11']),
         Extension('metrics', sources=['drbcython/metrics.pyx', 'cpp/metrics.cpp', 'cpp/graph.cpp'], language='c++', extra_compile_args=['-std=c++11'], include_dirs=[np.get_include()]),
         Extension('utils', sources=['drbcython/utils.pyx', 'cpp/utils.cpp', 'cpp/graph.cpp', 'cpp/graphUtil.cpp'], language='c++', extra_compile_args=['-std=c++11']),
-        Extension('graph_struct', sources=['drbcython/graph_struct.pyx', 'cpp/graph_struct.cpp'], language='c++', extra_compile_args=['-std=c++11']),
     ]),
 
     include_package_data=True,

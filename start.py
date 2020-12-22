@@ -10,7 +10,7 @@ def main():
 
     fix_random_seed(42)
     gym = Gym(experiment='vanilla_drbc')
-    gym.construct_datasets(min_nodes=50, max_nodes=100,
+    gym.construct_datasets(min_nodes=20, max_nodes=50,
                            nb_train_graphs=10, nb_valid_graphs=10, graphs_per_batch=4, nb_batches=2,
                            node_neighbors_aggregation='gcn',
                            graph_type='powerlaw')
