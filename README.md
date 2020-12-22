@@ -37,10 +37,10 @@ Adjust hyper-parameters in `start.py`, and run the following to train the model
 python start.py
 
 # Or alternatively provide all the hyperparameters via command line
-python -m drbcpp.gym --experiment my_experiment_name - \
-        construct_datasets --min_nodes 2 --max_nodes 1000 --nb_train_graphs 123 --nb_valid_graphs 123 --graphs_per_batch 20 --nb_batches 20 - \
-        construct_model - \ 
-        train --epochs 10
+python -m drbcpp.gym --experiment vanilla_drbc - \
+        construct_datasets --min_nodes 4000 --max_nodes 5000 --nb_train_graphs 100 --nb_valid_graphs 100 --graphs_per_batch 16 --nb_batches 50 --node_neighbors_aggregation gcn --graph_type powerlaw - \
+        construct_model --optimizer adam --aggregation lstm --combine gru - \ 
+        train --epochs 100 --stop_patience 5 --lr_reduce_patience 2
 ```
 
 
