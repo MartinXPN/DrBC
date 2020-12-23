@@ -156,6 +156,8 @@ class DataMonitor(Callback):
 
         front = self.processes.pop(0)
         train, valid = front.join()
+        self.train_generator.clear()
+        self.valid_generator.clear()
         self.train_generator.__dict__ = train.__dict__
         self.valid_generator.__dict__ = valid.__dict__
 

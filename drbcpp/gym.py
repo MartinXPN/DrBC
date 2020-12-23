@@ -94,7 +94,7 @@ class Gym:
             ModelCheckpoint(self.model_save_path / 'best.h5py', monitor='val_kendal', save_best_only=True, verbose=1, mode='max'),
             EarlyStopping(monitor='val_kendal', patience=stop_patience, mode='max', restore_best_weights=True),
             ReduceLROnPlateau(monitor='val_kendal', patience=lr_reduce_patience, factor=0.7, mode='max'),
-            DataMonitor(self.train_generator, self.valid_generator, update_frequency=5, prefetch=2),
+            DataMonitor(self.train_generator, self.valid_generator, update_frequency=5, prefetch=1),
         ],  add_history=True, add_progbar=True, verbose=1,
             model=self.model,
             epochs=epochs, steps=len(self.train_generator))
