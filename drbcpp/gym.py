@@ -28,9 +28,8 @@ class Gym:
         self.model_save_path.mkdir(parents=True, exist_ok=True)
         self.log_dir.mkdir(parents=True, exist_ok=True)
 
-        latest = Path('experiments') / 'latest/'
-        if latest.exists():
-            latest.unlink()
+        latest = Path('experiments/latest/').absolute()
+        latest.unlink(missing_ok=True)
         latest.symlink_to(self.experiment_path.absolute(), target_is_directory=True)
 
         self.train_generator: DataGenerator = None

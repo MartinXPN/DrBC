@@ -25,14 +25,14 @@ The code folder is organized as follows:
 
 ## Prerequisites
 Get the source code, and install all the dependencies.
-```
+```shell
 git clone https://github.com/MartinXPN/DrBCPP.git
 cd DrBCPP && pip install .
 ```
 
 ## Training
 Adjust hyper-parameters in `start.py`, and run the following to train the model
-```
+```shell
 # Change the hyperparameters in the start.py and then run it
 python start.py
 
@@ -51,10 +51,16 @@ https://drive.google.com/file/d/1nsVX8t5EP3JaTjfeHPf74N21jSDUA8dJ/view?usp=shari
 ```
 
 To run the evaluation and get the results
-```shell script
+```shell
 python predict.py real --model_path experiments/latest/models/best.h5py \
                        --data_test datasets/Real/amazon.txt \
                        --label_file datasets/Real/amazon_score.txt
+```
+
+## Alternatively, to build and run the Dockerfile
+```shell
+docker build -t drbcpp .
+docker run --gpus all -it -v $(pwd)/experiments:/drbcpp/experiments -v $(pwd)/datasets:/drbcpp/datasets -v $(pwd)/.aim:/drbcpp/.aim
 ```
 
 

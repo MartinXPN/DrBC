@@ -1,0 +1,25 @@
+.git/
+
+# Python
+venv/
+build
+dist
+*.egg-info
+*.egg/
+*.pyc
+*.swp
+
+.tox
+.coverage
+html/*
+__pycache__
+
+# Project
+.aim/
+models/
+visualize/
+experiments/
+datasets/
+
+# Compiled Documentation
+docs/_build

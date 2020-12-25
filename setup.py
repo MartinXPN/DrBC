@@ -9,7 +9,7 @@ setup(
     description='Python package for estimating the high Betweenness Centraliy (BC) nodes in a graph',
     author='Martin Mirakyan',
     author_email='mirakyanmartin@gmail.com',
-    python_requires='>=3.7.0,<3.9',
+    python_requires='>=3.6.9,<3.9',
     url='https://github.com/MartinXPN/DrBCPP',
     packages=find_packages(exclude=('tests',)),
     install_requires=[
