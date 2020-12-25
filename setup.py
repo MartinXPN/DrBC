@@ -20,7 +20,7 @@ setup(
         'numpy>=1.19.4',
         'pandas>=1.1.5',
         'tqdm>=4.54.1',
-        'tensorflow>=2.4.0',
+        'tensorflow>=2.3.0',
         'fire>=0.3.1',
         'aim>=2.1.4',
     ],
