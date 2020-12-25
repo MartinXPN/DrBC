@@ -60,7 +60,7 @@ python predict.py real --model_path experiments/latest/models/best.h5py \
 ## Alternatively, to build and run the Dockerfile
 ```shell
 docker build -t drbcpp .
-docker run --gpus all -it -v $(pwd)/experiments:/drbcpp/experiments -v $(pwd)/datasets:/drbcpp/datasets -v $(pwd)/.aim:/drbcpp/.aim
+docker run --gpus all -it --rm -v $(pwd)/experiments:/drbcpp/experiments -v $(pwd)/datasets:/drbcpp/datasets -v $(pwd)/.aim:/drbcpp/.aim drbcpp
 ```
 
 
