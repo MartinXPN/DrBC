@@ -1,17 +1,20 @@
+from typing import Optional
+
 import tensorflow as tf
 from tensorflow.keras.layers import Input, Lambda, Concatenate, Dense, LeakyReLU, LSTM, Attention
 from tensorflow.keras.models import Model
+from tensorflow.python.keras.layers import MultiHeadAttention
 
 from drbcpp.layers import DrBCRNN
 
 
-def drbc_model(node_feature_dim=3, aux_feature_dim=4, rnn_repetitions=5,
-               aggregation: str = 'max', combine='gru'):
+def drbc_model(node_feature_dim: int = 3, aux_feature_dim: int = 4, rnn_repetitions: int = 5,
+               aggregation: Optional[str] = 'max', combine: str = 'gru'):
     """
     :param node_feature_dim: initial node features, [Dc,1,1]
     :param aux_feature_dim: extra node features in the hidden layer in the decoder, [Dc,CI1,CI2,1]
     :param rnn_repetitions: how many loops are there in DrBCRNN
-    :param aggregation: how to aggregate sequences after DrBCRNN {min, max, sum, mean, lstm}
+    :param aggregation: how to aggregate sequences after DrBCRNN {min, max, sum, mean, multi_attention, lstm}
     :param combine: how to combine in each iteration in DrBCRNN {structure2vec, graphsage, gru}
     :return: DrBC tf.keras model
     """
@@ -28,9 +31,12 @@ def drbc_model(node_feature_dim=3, aux_feature_dim=4, rnn_repetitions=5,
     elif aggregation == 'min':      n2n_features = Lambda(lambda x: tf.reduce_min(x, axis=-1), name='aggregate')(n2n_features)
     elif aggregation == 'sum':      n2n_features = Lambda(lambda x: tf.reduce_sum(x, axis=-1), name='aggregate')(n2n_features)
     elif aggregation == 'mean':     n2n_features = Lambda(lambda x: tf.reduce_mean(x, axis=-1), name='aggregate')(n2n_features)
+    elif aggregation == 'multi_attention':
+        n2n_features = MultiHeadAttention(num_heads=4, key_dim=128, dropout=0.2)(n2n_features, n2n_features)
+        n2n_features = Lambda(lambda x: tf.reduce_sum(x, axis=-1), name='aggregate')(n2n_features)
     elif aggregation == 'lstm':
         n2n_features = LSTM(units=128, return_sequences=True)(n2n_features)
-        n2n_features = Attention()([n2n_features, n2n_features, n2n_features])
+        n2n_features = Attention(use_scale=True)([n2n_features, n2n_features, n2n_features])
         n2n_features = Lambda(lambda x: tf.reduce_sum(x, axis=-1), name='aggregate')(n2n_features)
     n2n_features = Lambda(lambda x: tf.math.l2_normalize(x, axis=-1), name='normalize_n2n')(n2n_features)
 

@@ -1,14 +1,14 @@
 import copy
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 import fire
 import numpy as np
 import pandas as pd
 from aim import Session
 from aim.tensorflow import AimCallback
-from tensorflow.keras.callbacks import CallbackList
-from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, TensorBoard, ReduceLROnPlateau
+from tensorflow.keras.callbacks import CallbackList, ModelCheckpoint, EarlyStopping, TensorBoard, ReduceLROnPlateau
 from tensorflow.python.keras.models import Model
 
 from drbcpp.data import DataGenerator, DataMonitor
@@ -58,7 +58,7 @@ class Gym:
         self.valid_generator = DataGenerator(tag='Valid', graph_type=graph_type, min_nodes=min_nodes, max_nodes=max_nodes, nb_graphs=nb_valid_graphs, node_neighbors_aggregation=node_neighbors_aggregation, graphs_per_batch=1, nb_batches=nb_valid_graphs, include_idx_map=True, random_samples=False, log_betweenness=False)
         return self
 
-    def construct_model(self, optimizer='adam', aggregation: str = 'lstm', combine: str = 'gru'):
+    def construct_model(self, optimizer='adam', aggregation: Optional[str] = 'lstm', combine: str = 'gru'):
         """
         :param optimizer: any tf.keras supported optimizer
         :param aggregation: how to aggregate sequences after DrBCRNN {min, max, sum, mean, lstm}

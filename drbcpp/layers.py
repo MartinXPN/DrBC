@@ -1,11 +1,13 @@
+from typing import Dict
+
 import tensorflow as tf
 from tensorflow.keras import backend as K
 from tensorflow.keras.layers import Layer, GRU, Dense, Add, Concatenate
 
 
-@tf.keras.utils.register_keras_serializable(package='drbc', name='GraphSage')
+@tf.keras.utils.register_keras_serializable(package='drbcpp', name='GraphSage')
 class GraphSage(Layer):
-    def __init__(self, units=128, **kwargs):
+    def __init__(self, units: int = 128, **kwargs):
         super().__init__(**kwargs)
         self.units = units
         self.fc1 = Dense(units=units, activation='relu')
@@ -22,9 +24,10 @@ class GraphSage(Layer):
         return {'units': self.units}
 
 
-@tf.keras.utils.register_keras_serializable(package='drbc', name='DrBCRNN')
+@tf.keras.utils.register_keras_serializable(package='drbcpp', name='DrBCRNN')
 class DrBCRNN(Layer):
-    def __init__(self, units=128, repetitions=5, combine='gru', return_sequences=True, **kwargs):
+    def __init__(self, units: int = 128, repetitions: int = 5, combine: str = 'gru',
+                 return_sequences: bool = True, **kwargs):
         super().__init__(**kwargs)
         self.units = units
         self.repetitions = repetitions
@@ -63,7 +66,7 @@ class DrBCRNN(Layer):
         out = tf.reshape(out, shape=target_shape)
         return out
 
-    def get_config(self):
+    def get_config(self) -> Dict:
         return {
             'units': self.units,
             'repetitions': self.repetitions,
