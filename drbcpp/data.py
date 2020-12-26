@@ -118,6 +118,14 @@ class DataGenerator(Sequence):
         self.betweenness = []
 
 
+def gen_new(train_generator: DataGenerator,
+            valid_generator: Optional[DataGenerator]) -> Tuple[DataGenerator, Optional[DataGenerator]]:
+    train_generator.gen_new_graphs()
+    if valid_generator:
+        valid_generator.gen_new_graphs()
+    return train_generator, valid_generator
+
+
 @dataclass
 class DataMonitor(Callback):
     """
@@ -134,18 +142,11 @@ class DataMonitor(Callback):
     prefetch: int = 1
     processes: List[ThreadWithReturnValue] = field(default_factory=lambda: list())
 
-    def gen_new(self) -> Tuple[DataGenerator, Optional[DataGenerator]]:
-        new_train_generator = copy.copy(self.train_generator)
-        new_valid_generator = copy.copy(self.valid_generator)
-        new_train_generator.gen_new_graphs()
-        if new_valid_generator:
-            new_valid_generator.gen_new_graphs()
-        return new_train_generator, new_valid_generator
-
     def on_train_begin(self, logs=None):
         assert self.prefetch >= 1
         for i in range(self.prefetch):
-            t = ThreadWithReturnValue(target=self.gen_new)
+            t = ThreadWithReturnValue(target=gen_new, daemon=True,
+                                      args=(copy.copy(self.train_generator), copy.copy(self.valid_generator)))
             t.start()
             self.processes.append(t)
         return super().on_train_begin(logs)
@@ -161,7 +162,8 @@ class DataMonitor(Callback):
         self.train_generator.__dict__ = train.__dict__
         self.valid_generator.__dict__ = valid.__dict__
 
-        t = ThreadWithReturnValue(target=self.gen_new)
+        t = ThreadWithReturnValue(target=gen_new, daemon=True,
+                                  args=(copy.copy(self.train_generator), copy.copy(self.valid_generator)))
         t.start()
         self.processes.append(t)
         return super().on_epoch_begin(epoch, logs)

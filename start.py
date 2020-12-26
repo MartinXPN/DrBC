@@ -10,11 +10,11 @@ def main():
 
     fix_random_seed(42)
     gym = Gym(experiment='vanilla_drbc')
-    gym.construct_datasets(min_nodes=4000, max_nodes=5000,
-                           nb_train_graphs=100, nb_valid_graphs=100, graphs_per_batch=2, nb_batches=200,
+    gym.construct_datasets(min_nodes=400, max_nodes=500,
+                           nb_train_graphs=100, nb_valid_graphs=100, graphs_per_batch=4, nb_batches=200,
                            node_neighbors_aggregation='gcn',
                            graph_type='powerlaw')
-    gym.construct_model(optimizer='adam', aggregation='lstm', combine='gru')
+    gym.construct_model(optimizer='adam', aggregation='max', combine='gru')
     gym.train(epochs=100, stop_patience=5, lr_reduce_patience=2)
 
 
