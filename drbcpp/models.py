@@ -1,9 +1,8 @@
 from typing import Optional
 
 import tensorflow as tf
-from tensorflow.keras.layers import Input, Lambda, Concatenate, Dense, LeakyReLU, LSTM, Attention
+from tensorflow.keras.layers import Input, Lambda, Concatenate, Dense, LeakyReLU, LSTM, Attention, MultiHeadAttention
 from tensorflow.keras.models import Model
-from tensorflow.python.keras.layers import MultiHeadAttention
 
 from drbcpp.layers import DrBCRNN
 
@@ -11,12 +10,12 @@ from drbcpp.layers import DrBCRNN
 def drbc_model(node_feature_dim: int = 3, aux_feature_dim: int = 4, rnn_repetitions: int = 5,
                aggregation: Optional[str] = 'max', combine: str = 'gru'):
     """
-    :param node_feature_dim: initial node features, [Dc,1,1]
-    :param aux_feature_dim: extra node features in the hidden layer in the decoder, [Dc,CI1,CI2,1]
-    :param rnn_repetitions: how many loops are there in DrBCRNN
-    :param aggregation: how to aggregate sequences after DrBCRNN {min, max, sum, mean, multi_attention, lstm}
-    :param combine: how to combine in each iteration in DrBCRNN {structure2vec, graphsage, gru}
-    :return: DrBC tf.keras model
+    @param node_feature_dim: initial node features, [Dc,1,1]
+    @param aux_feature_dim: extra node features in the hidden layer in the decoder, [Dc,CI1,CI2,1]
+    @param rnn_repetitions: how many loops are there in DrBCRNN
+    @param aggregation: how to aggregate sequences after DrBCRNN {min, max, sum, mean, multi_attention, lstm}
+    @param combine: how to combine in each iteration in DrBCRNN {structure2vec, graphsage, gru}
+    @return: DrBC tf.keras model
     """
     input_node_features = Input(shape=(node_feature_dim,), name='node_features')
     input_aux_features = Input(shape=(aux_feature_dim,), name='aux_features')
