@@ -1,12 +1,14 @@
-# DrBC++
-A graph neural network approach to identify high Betweenness Centraliy in a graph
+# DrBC in Tensorflow 2.x / Keras
+Implementation of DrBC approach in Tensorflow 2.x/Keras.
+
+DrBC is a graph neural network approach to identify high Betweenness Centraliy nodes in a graph
 
 This work is based on the initial DrBC project:
 Fan, Changjun and Zeng, Li and Ding, Yuhui and Chen, Muhao and Sun, Yizhou and Liu, Zhong[[Learning to Identify High Betweenness Centrality Nodes from Scratch: A Novel Graph Neural Network Approach]](http://arxiv.org/abs/1905.10418) (CIKM 2019)
 
-
 Original implementation: https://github.com/FFrankyy/DrBC/
-![](./visualize/Figure_demo.jpg "Demo")
+![](https://i.imgur.com/vqBlSUQ.jpg "Demo")
+
 
 The code folder is organized as follows:
 ```text
@@ -41,14 +43,21 @@ python -m drbcpp.gym --experiment vanilla_drbc - \
         construct_datasets --min_nodes 4000 --max_nodes 5000 --nb_train_graphs 100 --nb_valid_graphs 100 --graphs_per_batch 16 --nb_batches 50 --node_neighbors_aggregation gcn --graph_type powerlaw - \
         construct_model --optimizer adam --aggregation lstm --combine gru - \ 
         train --epochs 100 --stop_patience 5 --lr_reduce_patience 2
+
+# To see the progress on TensorBoard
+tensorboard --logdir experiments/latest/logs
+
+# To see the comparison between all the runs with Aim (you need to have docker running first)
+aim up
+
+# Or just view the history logs
+cat experiments/latest/logs/history.csv
 ```
 
 
 ## Reproducing the results that reported in the paper
-Download the dataset used for evaluation in the paper:
-```
-https://drive.google.com/file/d/1nsVX8t5EP3JaTjfeHPf74N21jSDUA8dJ/view?usp=sharing 
-```
+Download the dataset used for evaluation in the paper available on Google Drive: [link](https://drive.google.com/file/d/1nsVX8t5EP3JaTjfeHPf74N21jSDUA8dJ/view?usp=sharing).
+
 
 To run the evaluation and get the results
 ```shell
@@ -75,11 +84,6 @@ docker run --gpus all -it --rm -v $(pwd)/experiments:/drbcpp/experiments -v $(pw
 
 
 ## References
-To cite our work:
-```
-TODO
-```
-
 To cite the initial work [https://github.com/FFrankyy/DrBC](https://github.com/FFrankyy/DrBC)
 ```
 @inproceedings{fan2019learning,

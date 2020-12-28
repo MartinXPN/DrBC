@@ -9,12 +9,12 @@ def main():
     # load_model('path/to/experiments/<DATE>/models/best.h5py', custom_objects={'tf': tf}, compile=False).summary()
 
     fix_random_seed(42)
-    gym = Gym(experiment='effect_of_rnn_cycles')
-    gym.construct_datasets(min_nodes=500, max_nodes=1000,
-                           nb_train_graphs=100, nb_valid_graphs=100, graphs_per_batch=4, nb_batches=200,
+    gym = Gym(experiment='vanilla_drbc')
+    gym.construct_datasets(min_nodes=4000, max_nodes=5000,
+                           nb_train_graphs=100, nb_valid_graphs=100, graphs_per_batch=16, nb_batches=50,
                            node_neighbors_aggregation='gcn',
                            graph_type='powerlaw')
-    gym.construct_model(rnn_repetitions=5, optimizer='adam', aggregation=None, combine='gru')
+    gym.construct_model(rnn_repetitions=5, optimizer='adam', aggregation='max', combine='gru')
     gym.train(epochs=100, stop_patience=5, lr_reduce_patience=2)
 
 
