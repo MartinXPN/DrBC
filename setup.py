@@ -10,7 +10,7 @@ setup(
     author='Martin Mirakyan',
     author_email='mirakyanmartin@gmail.com',
     python_requires='>=3.8.0,<3.9',
-    url='https://github.com/MartinXPN/DrBCPP',
+    url='https://github.com/MartinXPN/DrBC',
     packages=find_packages(exclude=('tests',)),
     install_requires=[
         'Cython>=0.29.21',

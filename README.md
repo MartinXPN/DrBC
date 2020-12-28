@@ -28,8 +28,8 @@ The code folder is organized as follows:
 ## Prerequisites
 Get the source code, and install all the dependencies.
 ```shell
-git clone https://github.com/MartinXPN/DrBCPP.git
-cd DrBCPP && pip install .
+git clone https://github.com/MartinXPN/DrBC.git
+cd DrBC && pip install .
 ```
 
 ## Training
