@@ -55,15 +55,20 @@ cat experiments/latest/logs/history.csv
 ```
 
 
-## Reproducing the results that reported in the paper
-Download the dataset used for evaluation in the paper available on Google Drive: [link](https://drive.google.com/file/d/1nsVX8t5EP3JaTjfeHPf74N21jSDUA8dJ/view?usp=sharing).
+## Reproducing the results in the paper
+Download the dataset used for evaluation in the paper available on 
+Google Drive ([link](https://drive.google.com/file/d/1nsVX8t5EP3JaTjfeHPf74N21jSDUA8dJ/view?usp=sharing))
+or GitHub ([link](https://github.com/MartinXPN/DrBC/releases/download/v0.0.1/datasets.zip)).
 
+Also download the model ([link](https://github.com/MartinXPN/DrBC/releases/download/v0.0.1/best-model.zip)).
+Provide the path of the model as `--model_path` in the following step.
 
 To run the evaluation and get the results
 ```shell
-python predict.py real --model_path experiments/latest/models/best.h5py \
-                       --data_test datasets/Real/amazon.txt \
-                       --label_file datasets/Real/amazon_score.txt
+python -m drbc.predict real \
+            --model_path experiments/latest/models/best.h5py \
+            --data_test datasets/Real/amazon.txt \
+            --label_file datasets/Real/amazon_score.txt
 ```
 
 ## Alternatively, to build and run the Dockerfile
