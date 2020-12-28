@@ -4,7 +4,7 @@ import tensorflow as tf
 from tensorflow.keras.layers import Input, Lambda, Concatenate, Dense, LeakyReLU, LSTM, Attention, MultiHeadAttention
 from tensorflow.keras.models import Model
 
-from drbcpp.layers import DrBCRNN
+from drbc.layers import DrBCRNN
 
 
 def drbc_model(node_feature_dim: int = 3, aux_feature_dim: int = 4, rnn_repetitions: int = 5,

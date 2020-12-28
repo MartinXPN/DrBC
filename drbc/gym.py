@@ -10,10 +10,10 @@ from aim.tensorflow import AimCallback
 from tensorflow.keras.callbacks import CallbackList, ModelCheckpoint, EarlyStopping, TensorBoard, ReduceLROnPlateau
 from tensorflow.python.keras.models import Model
 
-from drbcpp.data import DataGenerator, DataMonitor
-from drbcpp.evaluation import EvaluateCallback
-from drbcpp.loss import pairwise_ranking_crossentropy_loss
-from drbcpp.models import drbc_model
+from drbc.data import DataGenerator, DataMonitor
+from drbc.evaluation import EvaluateCallback
+from drbc.loss import pairwise_ranking_crossentropy_loss
+from drbc.models import drbc_model
 
 
 def parse_params(params: Dict):

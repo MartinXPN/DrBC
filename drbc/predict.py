@@ -7,7 +7,7 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model, Model
 from tqdm import trange, tqdm
 
-from drbcpp.gym import DataGenerator, EvaluateCallback
+from drbc.gym import DataGenerator, EvaluateCallback
 
 
 def evaluate_synthetic_data(data_test, model_path):

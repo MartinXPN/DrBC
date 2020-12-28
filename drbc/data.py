@@ -10,7 +10,7 @@ from tensorflow.keras.utils import Sequence
 from tensorflow.keras.callbacks import Callback
 from tqdm import tqdm
 
-from drbcpp.util import ThreadWithReturnValue
+from drbc.util import ThreadWithReturnValue
 from drbcython import utils, graph, PrepareBatchGraph
 
 

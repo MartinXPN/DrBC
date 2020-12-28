@@ -1,5 +1,5 @@
-from drbcpp.gym import Gym
-from drbcpp.util import fix_random_seed
+from drbc.gym import Gym
+from drbc.util import fix_random_seed
 
 
 def main():

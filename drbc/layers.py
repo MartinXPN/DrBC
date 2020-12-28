@@ -5,7 +5,7 @@ from tensorflow.keras import backend as K
 from tensorflow.keras.layers import Layer, GRU, Dense, Add, Concatenate
 
 
-@tf.keras.utils.register_keras_serializable(package='drbcpp', name='GraphSage')
+@tf.keras.utils.register_keras_serializable(package='drbc', name='GraphSage')
 class GraphSage(Layer):
     def __init__(self, units: int = 128, **kwargs):
         super().__init__(**kwargs)
@@ -24,7 +24,7 @@ class GraphSage(Layer):
         return {'units': self.units}
 
 
-@tf.keras.utils.register_keras_serializable(package='drbcpp', name='DrBCRNN')
+@tf.keras.utils.register_keras_serializable(package='drbc', name='DrBCRNN')
 class DrBCRNN(Layer):
     def __init__(self, units: int = 128, repetitions: int = 5, combine: str = 'gru',
                  return_sequences: bool = True, **kwargs):

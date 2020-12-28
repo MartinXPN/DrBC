@@ -4,7 +4,7 @@ from Cython.Build import cythonize
 from Cython.Distutils import build_ext
 
 setup(
-    name='drbcpp',
+    name='drbc',
     version='0.0.1',
     description='Python package for estimating the high Betweenness Centraliy (BC) nodes in a graph',
     author='Martin Mirakyan',
