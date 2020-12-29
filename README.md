@@ -41,7 +41,7 @@ python start.py
 # Or alternatively provide all the hyperparameters via command line
 python -m drbc.gym --experiment vanilla_drbc - \
         construct_datasets --min_nodes 4000 --max_nodes 5000 --nb_train_graphs 100 --nb_valid_graphs 100 --graphs_per_batch 16 --nb_batches 50 --node_neighbors_aggregation gcn --graph_type powerlaw - \
-        construct_model --optimizer adam --aggregation lstm --combine gru - \ 
+        construct_model --optimizer adam --aggregation max --combine gru - \ 
         train --epochs 100 --stop_patience 5 --lr_reduce_patience 2
 
 # To see the progress on TensorBoard

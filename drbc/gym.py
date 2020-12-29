@@ -24,6 +24,10 @@ def parse_params(params: Dict):
 
 
 class Gym:
+    train_generator: DataGenerator
+    valid_generator: DataGenerator
+    model: Model
+
     def __init__(self, experiment: str = 'vanilla_drbc'):
         """
         Gym is the object which keeps track of the model and the data on which it is trained
@@ -39,10 +43,6 @@ class Gym:
         latest = Path('experiments/latest/').absolute()
         latest.unlink(missing_ok=True)
         latest.symlink_to(self.experiment_path.absolute(), target_is_directory=True)
-
-        self.train_generator: DataGenerator = None
-        self.valid_generator: DataGenerator = None
-        self.model: Model = None
 
         print(f'Logging experiments at: `{self.experiment_path.absolute()}`')
         self.aim_session = Session(experiment=experiment)
@@ -67,7 +67,7 @@ class Gym:
         return self
 
     def construct_model(self, rnn_repetitions: int = 5, 
-                        optimizer='adam', aggregation: Optional[str] = 'lstm', combine: str = 'gru'):
+                        optimizer='adam', aggregation: Optional[str] = 'max', combine: str = 'gru'):
         """
         @param rnn_repetitions: number of RNN cycles
         @param optimizer: any tf.keras supported optimizer

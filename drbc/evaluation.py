@@ -24,7 +24,8 @@ class EvaluateCallback(Callback):
         }
         for gid, (x, y, idx_map) in enumerate(self.data_generator):
             result = self.model.predict_on_batch(x=x).flatten()
-            betw_predict = [np.power(10, -pred_betweenness) if idx_map[i] >= 0 else 0
+            betw_predict = [np.power(10, -pred_betweenness if np.abs(pred_betweenness) < 10 else 10)
+                            if idx_map[i] >= 0 else 0
                             for i, pred_betweenness in enumerate(result)]
 
             betw_label = self.data_generator.betweenness[gid]
